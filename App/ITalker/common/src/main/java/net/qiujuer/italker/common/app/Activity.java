@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.EditText;
-
-import net.qiujuer.italker.common.R2;
 
 import java.util.List;
 
@@ -25,7 +22,10 @@ public abstract class Activity extends AppCompatActivity {
         initWidows();
 
         if (initArgs(getIntent().getExtras())) {
-            getContentLayoutId();
+            // 得到界面Id并设置到Activity界面中
+            int layId = getContentLayoutId();
+            setContentView(layId);
+
             initWidget();
             initData();
         } else {
