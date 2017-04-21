@@ -76,6 +76,14 @@ public class Message {
     private String receiverId;
 
 
+    // 一个群可以接收多个消息
+    @ManyToOne
+    @JoinColumn(name = "groupId")
+    private Group group;
+    @Column(updatable = false, insertable = false)
+    private String groupId;
+
+
     public String getId() {
         return id;
     }
@@ -154,5 +162,21 @@ public class Message {
 
     public void setReceiverId(String receiverId) {
         this.receiverId = receiverId;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 }
