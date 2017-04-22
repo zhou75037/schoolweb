@@ -29,4 +29,13 @@ public class LoginFragment extends Fragment {
         return R.layout.fragment_login;
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // 进行一次切换，默认切换为注册界面
+        mAccountTrigger.triggerView();
+
+    }
 }
