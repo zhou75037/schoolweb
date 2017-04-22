@@ -13,8 +13,8 @@
         android:background="@drawable/bg_gradient_black"
         android:paddingBottom="@dimen/len_28"
         android:paddingTop="@dimen/len_40"
-        app:subtitleTextAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:title="@string/label_register_welcome" />
+        app:title="@string/label_register_welcome"
+        app:titleTextAppearance="@style/TextAppearance.AppCompat.Display1" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -165,6 +165,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
+        android:layout_marginTop="@dimen/len_16"
         android:paddingEnd="@dimen/len_16"
         android:paddingStart="@dimen/len_16">
 
