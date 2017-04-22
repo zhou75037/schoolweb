@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
  */
 // 127.0.0.1/api/account/...
 @Path("/account")
-public class AccountService {
+public class AccountService extends BaseService {
     // 登录
     @POST
     @Path("/login")
@@ -111,13 +111,9 @@ public class AccountService {
         }
 
         // 拿到自己的个人信息
-        User user = UserFactory.findByToken(token);
-        if (user != null) {
-            return bind(user, pushId);
-        } else {
-            // Token 失效，所有无法进行绑定
-            return ResponseModel.buildAccountError();
-        }
+        // User user = UserFactory.findByToken(token);
+        User self = getSelf();
+        return bind(self, pushId);
     }
 
 
