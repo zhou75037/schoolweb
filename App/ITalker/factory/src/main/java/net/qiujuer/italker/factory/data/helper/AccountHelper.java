@@ -1,5 +1,6 @@
 package net.qiujuer.italker.factory.data.helper;
 
+import net.qiujuer.italker.factory.Factory;
 import net.qiujuer.italker.factory.R;
 import net.qiujuer.italker.factory.data.DataSource;
 import net.qiujuer.italker.factory.model.api.RspModel;
@@ -42,18 +43,18 @@ public class AccountHelper {
                     // 拿到实体
                     AccountRspModel accountRspModel = rspModel.getResult();
                     // 判断绑定状态，是否绑定设备
-                    if(accountRspModel.isBind()) {
+                    if (accountRspModel.isBind()) {
                         User user = accountRspModel.getUser();
-                        // 进行的是数据库写入和缓存绑定
+                        // TODO 进行的是数据库写入和缓存绑定
                         // 然后返回
                         callback.onDataLoaded(user);
-                    }else{
+                    } else {
                         // 进行绑定的唤起
                         bindPush(callback);
                     }
                 } else {
-                    // TODO 对返回的RspModel中的失败的Code进行解析，解析到对应的String资源上面
-                    // callback.onDataNotAvailable();
+                    // 错误解析
+                    Factory.decodeRspCode(rspModel, callback);
                 }
             }
 
@@ -67,10 +68,12 @@ public class AccountHelper {
 
     /**
      * 对设备Id进行绑定的操作
+     *
      * @param callback Callback
      */
-    public static void bindPush( final DataSource.Callback<User> callback){
-
+    public static void bindPush(final DataSource.Callback<User> callback) {
+        // TODO 先抛出一个错误，其实是我们的绑定没有进行
+        callback.onDataNotAvailable(R.string.app_name);
     }
 
 }
