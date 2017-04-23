@@ -5,8 +5,7 @@ package net.qiujuer.italker.factory.presenter;
  * @version 1.0.0
  */
 public class BasePresenter<T extends BaseContract.View> implements BaseContract.Presenter {
-
-    protected T mView;
+    private T mView;
 
     public BasePresenter(T view) {
         setView(view);
@@ -15,8 +14,10 @@ public class BasePresenter<T extends BaseContract.View> implements BaseContract.
     /**
      * 设置一个View，子类可以复写
      */
+    @SuppressWarnings("unchecked")
     protected void setView(T view) {
         this.mView = view;
+        this.mView.setPresenter(this);
     }
 
     /**
@@ -38,6 +39,7 @@ public class BasePresenter<T extends BaseContract.View> implements BaseContract.
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void destroy() {
         T view = mView;
