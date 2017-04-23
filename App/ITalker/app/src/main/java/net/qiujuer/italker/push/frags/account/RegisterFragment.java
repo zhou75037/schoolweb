@@ -2,6 +2,7 @@ package net.qiujuer.italker.push.frags.account;
 
 
 import android.content.Context;
+import android.widget.Button;
 import android.widget.EditText;
 
 import net.qiujuer.genius.ui.widget.Loading;
@@ -33,7 +34,7 @@ public class RegisterFragment extends PresenterFragment<RegisterContract.Present
     Loading mLoading;
 
     @BindView(R.id.btn_submit)
-    Loading mSubmit;
+    Button mSubmit;
 
 
     public RegisterFragment() {
