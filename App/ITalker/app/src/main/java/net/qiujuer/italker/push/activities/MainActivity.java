@@ -23,8 +23,6 @@ import net.qiujuer.italker.common.app.Activity;
 import net.qiujuer.italker.common.widget.PortraitView;
 import net.qiujuer.italker.factory.persistence.Account;
 import net.qiujuer.italker.push.R;
-import net.qiujuer.italker.push.activities.AccountActivity;
-import net.qiujuer.italker.push.frags.assist.PermissionsFragment;
 import net.qiujuer.italker.push.frags.main.ActiveFragment;
 import net.qiujuer.italker.push.frags.main.ContactFragment;
 import net.qiujuer.italker.push.frags.main.GroupFragment;
@@ -70,10 +68,10 @@ public class MainActivity extends Activity
 
     @Override
     protected boolean initArgs(Bundle bundle) {
-        if(Account.isComplete()) {
+        if (Account.isComplete()) {
             // 判断用户信息是否完全，完全则走正常流程
             return super.initArgs(bundle);
-        }else{
+        } else {
             UserActivity.show(this);
             return false;
         }
@@ -122,12 +120,23 @@ public class MainActivity extends Activity
 
     @OnClick(R.id.im_search)
     void onSearchMenuClick() {
-
+        // 在群的界面的时候，点击顶部的搜索就进入群搜索界面
+        // 其他都为人搜索的界面
+        int type = Objects.equals(mNavHelper.getCurrentTab().extra, R.string.title_group) ?
+                SearchActivity.TYPE_GROUP : SearchActivity.TYPE_USER;
+        SearchActivity.show(this, type);
     }
 
     @OnClick(R.id.btn_action)
     void onActionClick() {
-        AccountActivity.show(this);
+        // 浮动按钮点击时，判断当前界面是群还是联系人界面
+        // 如果是群，则打开群创建的界面
+        if (Objects.equals(mNavHelper.getCurrentTab().extra, R.string.title_group)) {
+            // TODO 打开群创建界面
+        } else {
+            // 如果是其他，都打开添加用户的界面
+            SearchActivity.show(this, SearchActivity.TYPE_USER);
+        }
     }
 
     /**
