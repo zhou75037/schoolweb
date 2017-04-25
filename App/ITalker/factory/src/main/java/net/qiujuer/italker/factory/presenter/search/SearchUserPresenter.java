@@ -1,10 +1,15 @@
 package net.qiujuer.italker.factory.presenter.search;
 
+import net.qiujuer.genius.kit.handler.Run;
+import net.qiujuer.genius.kit.handler.runable.Action;
+import net.qiujuer.italker.factory.data.DataSource;
+import net.qiujuer.italker.factory.data.helper.UserHelper;
 import net.qiujuer.italker.factory.model.card.UserCard;
 import net.qiujuer.italker.factory.presenter.BasePresenter;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
 
 /**
  * 搜索人的实现
@@ -13,7 +18,9 @@ import java.util.List;
  * @version 1.0.0
  */
 public class SearchUserPresenter extends BasePresenter<SearchContract.UserView>
-        implements SearchContract.Presenter {
+        implements SearchContract.Presenter, DataSource.Callback<List<UserCard>> {
+    private Call searchCall;
+
     public SearchUserPresenter(SearchContract.UserView view) {
         super(view);
     }
@@ -21,21 +28,42 @@ public class SearchUserPresenter extends BasePresenter<SearchContract.UserView>
     @Override
     public void search(String content) {
         start();
-        
-        UserCard userCard = new UserCard();
-        userCard.setName("dsadasd");
-        userCard.setPortrait("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1493146510453&di=d50f84921dec4c0a2b5732fbef71f5c4&imgtype=0&src=http%3A%2F%2Fb.hiphotos.baidu.com%2Fzhidao%2Fwh%253D450%252C600%2Fsign%3Dca1fd2eb054f78f0805e92f74c012663%2Fbd3eb13533fa828b97ecd15cfb1f4134960a5a45.jpg");
-        userCard.setFollow(true);
 
-        List<UserCard> userCards = new ArrayList<>();
-        userCards.add(userCard);
-        userCards.add(userCard);
-        userCards.add(userCard);
-        userCards.add(userCard);
+        Call call = searchCall;
+        if (call != null && !call.isCanceled()) {
+            // 如果有上一次的请求，并且没有取消，
+            // 则调用取消请求操作
+            call.cancel();
+        }
 
-        getView().onSearchDone(userCards);
+        searchCall = UserHelper.search(content, this);
+    }
 
+    @Override
+    public void onDataLoaded(final List<UserCard> userCards) {
+        // 搜索成功
+        final SearchContract.UserView view = getView();
+        if(view!=null){
+            Run.onUiAsync(new Action() {
+                @Override
+                public void call() {
+                    view.onSearchDone(userCards);
+                }
+            });
+        }
+    }
 
-
+    @Override
+    public void onDataNotAvailable(final int strRes) {
+        // 搜索失败
+        final SearchContract.UserView view = getView();
+        if(view!=null){
+            Run.onUiAsync(new Action() {
+                @Override
+                public void call() {
+                    view.showError(strRes);
+                }
+            });
+        }
     }
 }
