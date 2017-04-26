@@ -8,17 +8,20 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import net.qiujuer.italker.common.app.Fragment;
+import net.qiujuer.italker.common.app.PresenterFragment;
 import net.qiujuer.italker.common.widget.EmptyView;
 import net.qiujuer.italker.common.widget.PortraitView;
 import net.qiujuer.italker.common.widget.recycler.RecyclerAdapter;
 import net.qiujuer.italker.factory.model.db.User;
+import net.qiujuer.italker.factory.presenter.contact.ContactContract;
+import net.qiujuer.italker.factory.presenter.contact.ContactPresenter;
 import net.qiujuer.italker.push.R;
 import net.qiujuer.italker.push.activities.MessageActivity;
 
 import butterknife.BindView;
 
-public class ContactFragment extends Fragment {
+public class ContactFragment extends PresenterFragment<ContactContract.Presenter>
+        implements ContactContract.View {
 
     @BindView(R.id.empty)
     EmptyView mEmptyView;
@@ -71,6 +74,30 @@ public class ContactFragment extends Fragment {
         mEmptyView.bind(mRecycler);
         setPlaceHolderView(mEmptyView);
 
+    }
+
+    @Override
+    protected void onFirstInit() {
+        super.onFirstInit();
+        // 进行一次数据加载
+        mPresenter.start();
+    }
+
+    @Override
+    protected ContactContract.Presenter initPresenter() {
+        // 初始化Presenter
+        return new ContactPresenter(this);
+    }
+
+    @Override
+    public RecyclerAdapter<User> getRecyclerAdapter() {
+        return mAdapter;
+    }
+
+    @Override
+    public void onAdapterDataChanged() {
+        // 进行界面操作
+        mPlaceHolderView.triggerOkOrEmpty(mAdapter.getItemCount() > 0);
     }
 
 
