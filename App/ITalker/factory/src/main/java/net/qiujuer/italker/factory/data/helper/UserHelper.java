@@ -40,7 +40,8 @@ public class UserHelper {
                     // 数据库的存储操作，需要把UserCard转换为User
                     // 保存用户信息
                     User user = userCard.build();
-                    user.save();
+                    // 异步统一的保存
+                    DbHelper.save(User.class, user);
                     // 返回成功
                     callback.onDataLoaded(userCard);
                 } else {
@@ -97,9 +98,8 @@ public class UserHelper {
                     UserCard userCard = rspModel.getResult();
                     // 保存到本地数据库
                     User user = userCard.build();
-                    user.save();
-                    // TODO 通知联系人列表刷新
-
+                    // 保存并通知联系人列表刷新
+                    DbHelper.save(User.class, user);
                     // 返回数据
                     callback.onDataLoaded(userCard);
                 } else {
@@ -145,18 +145,16 @@ public class UserHelper {
                 .querySingle();
     }
 
+    // 从网络查询某用户的信息
     public static User findFromNet(String id) {
-
         RemoteService remoteService = Network.remote();
         try {
             Response<RspModel<UserCard>> response = remoteService.userFind(id).execute();
             UserCard card = response.body().getResult();
             if (card != null) {
-
-                // TODO 数据库的存储但是没有通知
                 User user = card.build();
-                user.save();
-
+                // 数据库的存储并通知
+                DbHelper.save(User.class, user);
                 return user;
             }
 
