@@ -6,6 +6,7 @@ import net.qiujuer.italker.factory.model.db.User;
 import java.util.Date;
 
 /**
+ * 用户卡片，用于接收服务器返回
  * @author qiujuer Email:qiujuer@live.cn
  * @version 1.0.0
  */
