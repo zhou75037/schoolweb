@@ -30,5 +30,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="Gradle: com.gexin.platform:gexin-rp-sdk-http:4.0.1.7" level="project" />
+    <orderEntry type="library" name="Gradle: com.gexin.platform:gexin-rp-sdk-base:4.0.0.12" level="project" />
+    <orderEntry type="library" name="Gradle: com.gexin.platform:gexin-rp-sdk-template:4.0.0.6" level="project" />
   </component>
 </module>
