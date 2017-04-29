@@ -39,6 +39,7 @@ public abstract class ChatFragment extends Fragment
         implements AppBarLayout.OnOffsetChangedListener {
 
     protected String mReceiverId;
+    protected Adapter mAdapter;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -72,6 +73,8 @@ public abstract class ChatFragment extends Fragment
 
         // RecyclerView基本设置
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mAdapter = new Adapter();
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     // 初始化Toolbar
@@ -144,10 +147,19 @@ public abstract class ChatFragment extends Fragment
                 // 文字内容
                 case Message.TYPE_STR:
                     return isRight ? R.layout.cell_chat_text_right : R.layout.cell_chat_text_left;
+
+                // 语音内容
+                case Message.TYPE_AUDIO:
+                    return isRight ? R.layout.cell_chat_audio_right : R.layout.cell_chat_audio_left;
+
+                // 图片内容
+                case Message.TYPE_PIC:
+                    return isRight ? R.layout.cell_chat_pic_right : R.layout.cell_chat_pic_left;
+
+                // 其他内容：文件
+                default:
+                    return isRight ? R.layout.cell_chat_text_right : R.layout.cell_chat_text_left;
             }
-
-
-            return 0;
         }
 
         @Override
@@ -158,8 +170,16 @@ public abstract class ChatFragment extends Fragment
                 case R.layout.cell_chat_text_left:
                     return new TextHolder(root);
 
+                case R.layout.cell_chat_audio_right:
+                case R.layout.cell_chat_audio_left:
+                    return new AudioHolder(root);
+
+                case R.layout.cell_chat_pic_right:
+                case R.layout.cell_chat_pic_left:
+                    return new PicHolder(root);
 
                 // 默认情况下，返回的就是Text类型的Holder进行处理
+                // 文件的一些实现
                 default:
                     return new TextHolder(root);
             }
@@ -247,5 +267,34 @@ public abstract class ChatFragment extends Fragment
 
         }
     }
+
+    // 语音的Holder
+    class AudioHolder extends BaseHolder {
+
+        public AudioHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        protected void onBind(Message message) {
+            super.onBind(message);
+            // TODO
+        }
+    }
+
+    // 图片的Holder
+    class PicHolder extends BaseHolder {
+
+        public PicHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        protected void onBind(Message message) {
+            super.onBind(message);
+            // TODO
+        }
+    }
+
 
 }
