@@ -6,6 +6,7 @@ import net.qiujuer.italker.factory.data.helper.MessageHelper;
 import net.qiujuer.italker.factory.data.message.MessageDataSource;
 import net.qiujuer.italker.factory.model.api.message.MsgCreateModel;
 import net.qiujuer.italker.factory.model.db.Message;
+import net.qiujuer.italker.factory.persistence.Account;
 import net.qiujuer.italker.factory.presenter.BaseSourcePresenter;
 import net.qiujuer.italker.factory.utils.DiffUiDataCallback;
 
@@ -59,6 +60,18 @@ public class ChatPresenter<View extends ChatContract.View>
 
     @Override
     public boolean rePush(Message message) {
+        // 确定消息是可重复发送的
+        if (Account.getUserId().equalsIgnoreCase(message.getSender().getId())
+                && message.getStatus() == Message.STATUS_FAILED) {
+
+            // 更改状态
+            message.setStatus(Message.STATUS_CREATED);
+            // 构建发送Model
+            MsgCreateModel model = MsgCreateModel.buildWithMessage(message);
+            MessageHelper.push(model);
+            return true;
+        }
+
         return false;
     }
 

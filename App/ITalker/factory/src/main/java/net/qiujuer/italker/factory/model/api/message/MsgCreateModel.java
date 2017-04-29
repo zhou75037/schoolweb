@@ -55,6 +55,37 @@ public class MsgCreateModel {
         return receiverType;
     }
 
+
+    // 当我们需要发送一个文件的时候，content刷新的问题
+
+    private MessageCard card;
+
+    // 返回一个Card
+    public MessageCard buildCard() {
+        if (card == null) {
+            MessageCard card = new MessageCard();
+            card.setId(id);
+            card.setContent(content);
+            card.setAttach(attach);
+            card.setType(type);
+            card.setSenderId(Account.getUserId());
+
+            // 如果是群
+            if (receiverType == Message.RECEIVER_TYPE_GROUP) {
+                card.setGroupId(receiverId);
+            } else {
+                card.setReceiverId(receiverId);
+            }
+
+            // 通过当前model建立的Card就是一个初步状态的Card
+            card.setStatus(Message.STATUS_CREATED);
+            card.setCreateAt(new Date());
+            this.card = card;
+        }
+        return this.card;
+    }
+
+
     /**
      * 建造者模式，快速的建立一个发送Model
      */
@@ -90,32 +121,27 @@ public class MsgCreateModel {
 
     }
 
+    /**
+     * 把一个Message消息，转换为一个创建状态的CreateModel
+     * @param message Message
+     * @return MsgCreateModel
+     */
+    public static MsgCreateModel buildWithMessage(Message message) {
+        MsgCreateModel model = new MsgCreateModel();
+        model.id = message.getId();
+        model.content = message.getContent();
+        model.type = message.getType();
+        model.attach = message.getAttach();
 
-    // 当我们需要发送一个文件的时候，content刷新的问题
-
-    private MessageCard card;
-    // 返回一个Card
-    public MessageCard buildCard() {
-        if (card == null) {
-            MessageCard card = new MessageCard();
-            card.setId(id);
-            card.setContent(content);
-            card.setAttach(attach);
-            card.setType(type);
-            card.setSenderId(Account.getUserId());
-
-            // 如果是群
-            if (receiverType == Message.RECEIVER_TYPE_GROUP) {
-                card.setGroupId(receiverId);
-            } else {
-                card.setReceiverId(receiverId);
-            }
-
-            // 通过当前model建立的Card就是一个初步状态的Card
-            card.setStatus(Message.STATUS_CREATED);
-            card.setCreateAt(new Date());
-            this.card = card;
+        if (message.getReceiver() != null) {
+            // 如果接收者不为null，则是给人发送消息
+            model.receiverId = message.getReceiver().getId();
+            model.receiverType = Message.RECEIVER_TYPE_NONE;
+        } else {
+            model.receiverId = message.getGroup().getId();
+            model.receiverType = Message.RECEIVER_TYPE_GROUP;
         }
-        return this.card;
+
+        return model;
     }
 }
