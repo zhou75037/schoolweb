@@ -16,13 +16,14 @@ import com.bumptech.glide.Glide;
 
 import net.qiujuer.genius.ui.compat.UiCompat;
 import net.qiujuer.genius.ui.widget.Loading;
-import net.qiujuer.italker.common.app.Fragment;
+import net.qiujuer.italker.common.app.PresenterFragment;
 import net.qiujuer.italker.common.widget.PortraitView;
 import net.qiujuer.italker.common.widget.adapter.TextWatcherAdapter;
 import net.qiujuer.italker.common.widget.recycler.RecyclerAdapter;
 import net.qiujuer.italker.factory.model.db.Message;
 import net.qiujuer.italker.factory.model.db.User;
 import net.qiujuer.italker.factory.persistence.Account;
+import net.qiujuer.italker.factory.presenter.message.ChatContract;
 import net.qiujuer.italker.push.R;
 import net.qiujuer.italker.push.activities.MessageActivity;
 
@@ -35,8 +36,10 @@ import butterknife.OnClick;
  * @author qiujuer Email:qiujuer@live.cn
  * @version 1.0.0
  */
-public abstract class ChatFragment extends Fragment
-        implements AppBarLayout.OnOffsetChangedListener {
+public abstract class ChatFragment<InitModel>
+        extends PresenterFragment<ChatContract.Presenter>
+        implements AppBarLayout.OnOffsetChangedListener,
+        ChatContract.View<InitModel> {
 
     protected String mReceiverId;
     protected Adapter mAdapter;
@@ -75,6 +78,13 @@ public abstract class ChatFragment extends Fragment
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new Adapter();
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected void initData() {
+        super.initData();
+        // 开始进行初始化操作
+        mPresenter.start();
     }
 
     // 初始化Toolbar
@@ -125,6 +135,9 @@ public abstract class ChatFragment extends Fragment
     void onSubmitClick() {
         if (mSubmit.isActivated()) {
             // 发送
+            String content = mContent.getText().toString();
+            mContent.setText("");
+            mPresenter.pushText(content);
         } else {
             onMoreClick();
         }
@@ -134,6 +147,15 @@ public abstract class ChatFragment extends Fragment
         // TODO
     }
 
+    @Override
+    public RecyclerAdapter<Message> getRecyclerAdapter() {
+        return mAdapter;
+    }
+
+    @Override
+    public void onAdapterDataChanged() {
+        // 界面没有占位布局，Recycler是一直显示的，所有不需要做任何事情
+    }
 
     // 内容的适配器
     private class Adapter extends RecyclerAdapter<Message> {
