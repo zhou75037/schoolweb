@@ -15,6 +15,7 @@ import net.qiujuer.italker.common.widget.PortraitView;
 import net.qiujuer.italker.common.widget.recycler.RecyclerAdapter;
 import net.qiujuer.italker.factory.model.db.Session;
 import net.qiujuer.italker.factory.presenter.message.SessionContract;
+import net.qiujuer.italker.factory.presenter.message.SessionPresenter;
 import net.qiujuer.italker.push.R;
 import net.qiujuer.italker.push.activities.MessageActivity;
 import net.qiujuer.italker.utils.DateTimeUtil;
@@ -88,7 +89,7 @@ public class ActiveFragment extends PresenterFragment<SessionContract.Presenter>
 
     @Override
     protected SessionContract.Presenter initPresenter() {
-        return null;
+        return new SessionPresenter(this);
     }
 
     @Override
