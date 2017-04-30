@@ -2,6 +2,7 @@ package net.qiujuer.web.italker.push.factory;
 
 import com.google.common.base.Strings;
 import net.qiujuer.web.italker.push.bean.api.base.PushModel;
+import net.qiujuer.web.italker.push.bean.card.GroupMemberCard;
 import net.qiujuer.web.italker.push.bean.card.MessageCard;
 import net.qiujuer.web.italker.push.bean.db.*;
 import net.qiujuer.web.italker.push.utils.Hib;
@@ -141,8 +142,23 @@ public class PushFactory {
     }
 
 
-    public static void pushGroupAdd(Set<GroupMember> members) {
+    /**
+     * 通知一些成员，被加入了XXX群
+     *
+     * @param members 被加入群的成员
+     */
+    public static void pushJoinGroup(Set<GroupMember> members) {
         // TODO 给群成员发送已经被添加的消息
+
+    }
+
+    /**
+     * 通知老成员，有一系列新的成员加入到某个群
+     *
+     * @param oldMembers  老的成员
+     * @param insertCards 新的成员的信息集合
+     */
+    public static void pushGroupMemberAdd(Set<GroupMember> oldMembers, List<GroupMemberCard> insertCards) {
 
     }
 }

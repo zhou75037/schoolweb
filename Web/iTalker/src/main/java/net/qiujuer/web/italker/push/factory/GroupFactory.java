@@ -116,4 +116,21 @@ public class GroupFactory {
                     .list();
         });
     }
+
+    // 给群添加成员
+    public static Set<GroupMember> addMembers(Group group, List<User> insertUsers) {
+        return Hib.query(session -> {
+
+            Set<GroupMember> members = new HashSet<>();
+
+            for (User user : insertUsers) {
+                GroupMember member = new GroupMember(user, group);
+                // 保存，并没有提交到数据库
+                session.save(member);
+                members.add(member);
+            }
+
+            return members;
+        });
+    }
 }
