@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import net.qiujuer.web.italker.push.bean.api.base.PushModel;
 import net.qiujuer.web.italker.push.bean.card.GroupMemberCard;
 import net.qiujuer.web.italker.push.bean.card.MessageCard;
+import net.qiujuer.web.italker.push.bean.card.UserCard;
 import net.qiujuer.web.italker.push.bean.db.*;
 import net.qiujuer.web.italker.push.utils.Hib;
 import net.qiujuer.web.italker.push.utils.PushDispatcher;
@@ -222,6 +223,64 @@ public class PushFactory {
         });
 
         // 提交发送
+        dispatcher.submit();
+    }
+
+    /**
+     * 推送账户退出消息
+     *
+     * @param receiver 接收者
+     * @param pushId   这个时刻的接收者的设备Id
+     */
+    public static void pushLogout(User receiver, String pushId) {
+        // 历史记录表字段建立
+        PushHistory history = new PushHistory();
+        // 你被添加到群的类型
+        history.setEntityType(PushModel.ENTITY_TYPE_LOGOUT);
+        history.setEntity("Account logout!!!");
+        history.setReceiver(receiver);
+        history.setReceiverPushId(pushId);
+        // 保存到历史记录表
+        Hib.queryOnly(session -> session.save(history));
+
+        // 发送者
+        PushDispatcher dispatcher = new PushDispatcher();
+        // 具体推送的内容
+        PushModel pushModel = new PushModel()
+                .add(history.getEntityType(), history.getEntity());
+
+        // 添加并提交到第三方推送
+        dispatcher.add(receiver, pushModel);
+        dispatcher.submit();
+    }
+
+    /**
+     * 给一个朋友推送我的信息过去
+     * 类型是：我关注了他
+     *
+     * @param receiver 接收者
+     * @param userCard 我的卡片信息
+     */
+    public static void pushFollow(User receiver, UserCard userCard) {
+        // 一定是相互关注了
+        userCard.setFollow(true);
+        String entity = TextUtil.toJson(userCard);
+
+        // 历史记录表字段建立
+        PushHistory history = new PushHistory();
+        // 你被添加到群的类型
+        history.setEntityType(PushModel.ENTITY_TYPE_ADD_FRIEND);
+        history.setEntity(entity);
+        history.setReceiver(receiver);
+        history.setReceiverPushId(receiver.getPushId());
+        // 保存到历史记录表
+        Hib.queryOnly(session -> session.save(history));
+
+        // 推送
+        PushDispatcher dispatcher = new PushDispatcher();
+        PushModel pushModel = new PushModel()
+                .add(history.getEntityType(), history.getEntity());
+        dispatcher.add(receiver, pushModel);
         dispatcher.submit();
     }
 }
