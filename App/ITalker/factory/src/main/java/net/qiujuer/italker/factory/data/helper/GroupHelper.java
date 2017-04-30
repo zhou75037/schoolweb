@@ -9,6 +9,8 @@ import net.qiujuer.italker.factory.model.api.RspModel;
 import net.qiujuer.italker.factory.model.api.group.GroupCreateModel;
 import net.qiujuer.italker.factory.model.card.GroupCard;
 import net.qiujuer.italker.factory.model.db.Group;
+import net.qiujuer.italker.factory.model.db.GroupMember;
+import net.qiujuer.italker.factory.model.db.GroupMember_Table;
 import net.qiujuer.italker.factory.model.db.Group_Table;
 import net.qiujuer.italker.factory.model.db.User;
 import net.qiujuer.italker.factory.net.Network;
@@ -115,5 +117,45 @@ public class GroupHelper {
 
         // 把当前的调度者返回
         return call;
+    }
+
+    // 刷新我的群组列表
+    public static void refreshGroups() {
+        RemoteService service = Network.remote();
+        service.groups("").enqueue(new Callback<RspModel<List<GroupCard>>>() {
+            @Override
+            public void onResponse(Call<RspModel<List<GroupCard>>> call, Response<RspModel<List<GroupCard>>> response) {
+                RspModel<List<GroupCard>> rspModel = response.body();
+                if (rspModel.success()) {
+                    List<GroupCard> groupCards = rspModel.getResult();
+                    if (groupCards != null && groupCards.size() > 0) {
+                        // 进行调度显示
+                        Factory.getGroupCenter().dispatch(groupCards.toArray(new GroupCard[0]));
+                    }
+                } else {
+                    Factory.decodeRspCode(rspModel, null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RspModel<List<GroupCard>>> call, Throwable t) {
+                // 不做任何事情
+            }
+        });
+
+
+    }
+
+    // 获取一个群的成员数量
+    public static long getMemberCount(String id) {
+        return SQLite.select()
+                .from(GroupMember.class)
+                .where(GroupMember_Table.group_id.eq(id))
+                .count();
+    }
+
+    // 从网络去刷新一个群的成员信息
+    public static void refreshGroupMember(Group group) {
+
     }
 }

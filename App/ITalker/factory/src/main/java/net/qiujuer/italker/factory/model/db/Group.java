@@ -5,6 +5,8 @@ import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 
+import net.qiujuer.italker.factory.data.helper.GroupHelper;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -140,5 +142,15 @@ public class Group extends BaseDbModel<Group> implements Serializable {
                 && Objects.equals(this.desc, oldT.desc)
                 && Objects.equals(this.picture, oldT.picture)
                 && Objects.equals(this.holder, oldT.holder);
+    }
+
+    private long groupMemberCount = -1;
+    // 获取当前群的成员数量，使用内存缓存
+    public long getGroupMemberCount() {
+        if (groupMemberCount == -1) {
+            // -1 没有初始化
+            groupMemberCount = GroupHelper.getMemberCount(id);
+        }
+        return groupMemberCount;
     }
 }
