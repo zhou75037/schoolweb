@@ -1,11 +1,14 @@
 package net.qiujuer.italker.factory.data.group;
 
+import android.text.TextUtils;
+
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import net.qiujuer.italker.factory.data.BaseDbRepository;
 import net.qiujuer.italker.factory.data.helper.GroupHelper;
 import net.qiujuer.italker.factory.model.db.Group;
 import net.qiujuer.italker.factory.model.db.Group_Table;
+import net.qiujuer.italker.factory.model.db.view.MemberUserModel;
 
 import java.util.List;
 
@@ -53,8 +56,18 @@ public class GroupsRepository extends BaseDbRepository<Group>
 
     // 初始化界面显示的成员信息
     private String buildGroupHolder(Group group) {
+        List<MemberUserModel> userModels = group.getLatelyGroupMembers();
+        if (userModels == null || userModels.size() == 0)
+            return null;
 
+        StringBuilder builder = new StringBuilder();
+        for (MemberUserModel userModel : userModels) {
+            builder.append(TextUtils.isEmpty(userModel.alias) ? userModel.name : userModel.alias);
+            builder.append(", ");
+        }
 
-        return null;
+        builder.delete(builder.lastIndexOf(", "), builder.length());
+
+        return builder.toString();
     }
 }

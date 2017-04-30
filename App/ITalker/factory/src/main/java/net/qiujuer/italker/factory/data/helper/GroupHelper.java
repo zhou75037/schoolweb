@@ -1,5 +1,6 @@
 package net.qiujuer.italker.factory.data.helper;
 
+import com.raizlabs.android.dbflow.sql.language.Join;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import net.qiujuer.italker.factory.Factory;
@@ -8,11 +9,14 @@ import net.qiujuer.italker.factory.data.DataSource;
 import net.qiujuer.italker.factory.model.api.RspModel;
 import net.qiujuer.italker.factory.model.api.group.GroupCreateModel;
 import net.qiujuer.italker.factory.model.card.GroupCard;
+import net.qiujuer.italker.factory.model.card.GroupMemberCard;
 import net.qiujuer.italker.factory.model.db.Group;
 import net.qiujuer.italker.factory.model.db.GroupMember;
 import net.qiujuer.italker.factory.model.db.GroupMember_Table;
 import net.qiujuer.italker.factory.model.db.Group_Table;
 import net.qiujuer.italker.factory.model.db.User;
+import net.qiujuer.italker.factory.model.db.User_Table;
+import net.qiujuer.italker.factory.model.db.view.MemberUserModel;
 import net.qiujuer.italker.factory.net.Network;
 import net.qiujuer.italker.factory.net.RemoteService;
 
@@ -142,13 +146,11 @@ public class GroupHelper {
                 // 不做任何事情
             }
         });
-
-
     }
 
     // 获取一个群的成员数量
     public static long getMemberCount(String id) {
-        return SQLite.select()
+        return SQLite.selectCountOf()
                 .from(GroupMember.class)
                 .where(GroupMember_Table.group_id.eq(id))
                 .count();
@@ -156,6 +158,41 @@ public class GroupHelper {
 
     // 从网络去刷新一个群的成员信息
     public static void refreshGroupMember(Group group) {
+        RemoteService service = Network.remote();
+        service.groupMembers(group.getId()).enqueue(new Callback<RspModel<List<GroupMemberCard>>>() {
+            @Override
+            public void onResponse(Call<RspModel<List<GroupMemberCard>>> call, Response<RspModel<List<GroupMemberCard>>> response) {
+                RspModel<List<GroupMemberCard>> rspModel = response.body();
+                if (rspModel.success()) {
+                    List<GroupMemberCard> memberCards = rspModel.getResult();
+                    if (memberCards != null && memberCards.size() > 0) {
+                        // 进行调度显示
+                        Factory.getGroupCenter().dispatch(memberCards.toArray(new GroupMemberCard[0]));
+                    }
+                } else {
+                    Factory.decodeRspCode(rspModel, null);
+                }
+            }
 
+            @Override
+            public void onFailure(Call<RspModel<List<GroupMemberCard>>> call, Throwable t) {
+                // 不做任何事情
+            }
+        });
+    }
+
+    // 关联查询一个用户和群成员的表，返回一个MemberUserModel表的集合
+    public static List<MemberUserModel> getMemberUsers(String groupId, int size) {
+        return SQLite.select(GroupMember_Table.alias.withTable().as("alias"),
+                User_Table.id.withTable().as("id"),
+                User_Table.name.withTable().as("name"),
+                User_Table.portrait.withTable().as("portrait"))
+                .from(GroupMember.class)
+                .join(User.class, Join.JoinType.INNER)
+                .on(GroupMember_Table.user_id.withTable().eq(User_Table.id.withTable()))
+                .where(GroupMember_Table.group_id.withTable().eq(groupId))
+                .orderBy(GroupMember_Table.user_id, true)
+                .limit(size)
+                .queryCustomList(MemberUserModel.class);
     }
 }

@@ -6,9 +6,11 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 
 import net.qiujuer.italker.factory.data.helper.GroupHelper;
+import net.qiujuer.italker.factory.model.db.view.MemberUserModel;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -145,6 +147,7 @@ public class Group extends BaseDbModel<Group> implements Serializable {
     }
 
     private long groupMemberCount = -1;
+
     // 获取当前群的成员数量，使用内存缓存
     public long getGroupMemberCount() {
         if (groupMemberCount == -1) {
@@ -152,5 +155,16 @@ public class Group extends BaseDbModel<Group> implements Serializable {
             groupMemberCount = GroupHelper.getMemberCount(id);
         }
         return groupMemberCount;
+    }
+
+    private List<MemberUserModel> groupLatelyMembers;
+    // 获取当前群对应的成员的信息，只加载4个信息
+    public List<MemberUserModel> getLatelyGroupMembers() {
+        if (groupLatelyMembers == null || groupLatelyMembers.isEmpty()) {
+            // 加载简单的用户信息，返回4条，至多
+            groupLatelyMembers = GroupHelper.getMemberUsers(id, 4);
+        }
+
+        return groupLatelyMembers;
     }
 }
