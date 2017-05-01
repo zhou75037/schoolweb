@@ -18,6 +18,6 @@ public interface GroupMembersContract {
     // 界面
     interface View extends BaseContract.RecyclerView<Presenter, MemberUserModel> {
         // 获取群的ID
-        String getmGroupId();
+        String getGroupId();
     }
 }
