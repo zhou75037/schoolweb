@@ -29,6 +29,9 @@ import net.qiujuer.italker.factory.persistence.Account;
 import net.qiujuer.italker.factory.presenter.message.ChatContract;
 import net.qiujuer.italker.push.R;
 import net.qiujuer.italker.push.activities.MessageActivity;
+import net.qiujuer.italker.push.frags.panel.PanelFragment;
+import net.qiujuer.widget.airpanel.AirPanel;
+import net.qiujuer.widget.airpanel.Util;
 
 import java.util.Objects;
 
@@ -65,6 +68,9 @@ public abstract class ChatFragment<InitModel>
     @BindView(R.id.btn_submit)
     View mSubmit;
 
+    // 控制顶部面板与软键盘过度的Boss控件
+    private AirPanel.Boss mPanelBoss;
+    private PanelFragment mPanelFragment;
 
     @Override
     protected void initArgs(Bundle bundle) {
@@ -92,6 +98,18 @@ public abstract class ChatFragment<InitModel>
 
         // 在这里进行了控件绑定
         super.initWidget(root);
+
+        // 初始化面板操作
+        mPanelBoss = (AirPanel.Boss) root.findViewById(R.id.lay_content);
+        mPanelBoss.setup(new AirPanel.PanelListener() {
+            @Override
+            public void requestHideSoftKeyboard() {
+                // 请求隐藏软键盘
+                Util.hideKeyboard(mContent);
+            }
+        });
+        mPanelFragment = (PanelFragment) getChildFragmentManager().findFragmentById(R.id.frag_panel);
+
 
         initToolbar();
         initAppbar();
@@ -146,12 +164,15 @@ public abstract class ChatFragment<InitModel>
 
     @OnClick(R.id.btn_face)
     void onFaceClick() {
-        // TODO
+        // 仅仅只需请求打开即可
+        mPanelBoss.openPanel();
+        mPanelFragment.showFace();
     }
 
     @OnClick(R.id.btn_record)
     void onRecordClick() {
-        // TODO
+        mPanelBoss.openPanel();
+        mPanelFragment.showRecord();
     }
 
     @OnClick(R.id.btn_submit)
@@ -167,7 +188,8 @@ public abstract class ChatFragment<InitModel>
     }
 
     private void onMoreClick() {
-        // TODO
+        mPanelBoss.openPanel();
+        mPanelFragment.showGallery();
     }
 
     @Override

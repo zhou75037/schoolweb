@@ -1,6 +1,7 @@
 <net.qiujuer.italker.common.widget.MessageLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lay_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -20,10 +21,10 @@
 
             <!--顶部布局的占位-->
             <ViewStub
-                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
                 android:id="@+id/view_stub_header"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap" />
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v7.widget.RecyclerView
@@ -95,4 +96,19 @@
             android:src="@drawable/ic_submit"
             android:tint="@color/textPrimary" />
     </LinearLayout>
+
+    <!--id是固定的airPanelSubLayout-->
+    <net.qiujuer.widget.airpanel.AirPanelFrameLayout
+        android:id="@id/airPanelSubLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey_300"
+        android:visibility="gone">
+
+        <fragment
+            android:id="@+id/frag_panel"
+            class="net.qiujuer.italker.push.frags.panel.PanelFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </net.qiujuer.widget.airpanel.AirPanelFrameLayout>
 </net.qiujuer.italker.common.widget.MessageLayout>
