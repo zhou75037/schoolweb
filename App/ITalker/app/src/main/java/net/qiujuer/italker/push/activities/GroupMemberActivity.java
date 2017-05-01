@@ -18,12 +18,13 @@ import net.qiujuer.italker.factory.model.db.view.MemberUserModel;
 import net.qiujuer.italker.factory.presenter.group.GroupMembersContract;
 import net.qiujuer.italker.factory.presenter.group.GroupMembersPresenter;
 import net.qiujuer.italker.push.R;
+import net.qiujuer.italker.push.frags.group.GroupMemberAddFragment;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 public class GroupMemberActivity extends PresenterToolbarActivity<GroupMembersContract.Presenter>
-        implements GroupMembersContract.View {
+        implements GroupMembersContract.View, GroupMemberAddFragment.Callback {
     private static final String KEY_GROUP_ID = "KEY_GROUP_ID";
     private static final String KEY_GROUP_ADMIN = "KEY_GROUP_ADMIN";
 
@@ -94,6 +95,12 @@ public class GroupMemberActivity extends PresenterToolbarActivity<GroupMembersCo
         super.initData();
         // 开始数据刷新
         mPresenter.refresh();
+
+        // 显示管理员界面，添加成员
+        if (mIsAdmin) {
+            new GroupMemberAddFragment()
+                    .show(getSupportFragmentManager(), GroupMemberAddFragment.class.getName());
+        }
     }
 
     @Override
@@ -115,6 +122,18 @@ public class GroupMemberActivity extends PresenterToolbarActivity<GroupMembersCo
     @Override
     public String getGroupId() {
         return mGroupId;
+    }
+
+    @Override
+    public void hideLoading() {
+        super.hideLoading();
+    }
+
+    @Override
+    public void refreshMembers() {
+        // 重新加载成员信息
+        if (mPresenter != null)
+            mPresenter.refresh();
     }
 
     class ViewHolder extends RecyclerAdapter.ViewHolder<MemberUserModel> {
