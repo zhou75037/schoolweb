@@ -21,6 +21,7 @@ import net.qiujuer.italker.factory.model.db.view.MemberUserModel;
 import net.qiujuer.italker.factory.presenter.message.ChatContract;
 import net.qiujuer.italker.factory.presenter.message.ChatGroupPresenter;
 import net.qiujuer.italker.push.R;
+import net.qiujuer.italker.push.activities.GroupMemberActivity;
 import net.qiujuer.italker.push.activities.PersonalActivity;
 
 import java.util.List;
@@ -150,7 +151,8 @@ public class ChatGroupFragment extends ChatFragment<Group>
             mMemberMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO 显示成员列表
+                    // mReceiverId 就是群的Id
+                    GroupMemberActivity.show(getContext(), mReceiverId );
                 }
             });
         } else {
@@ -167,7 +169,8 @@ public class ChatGroupFragment extends ChatFragment<Group>
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     if (item.getItemId() == R.id.action_add) {
-                        // TODO 进行群成员添加操作
+                        // mReceiverId 就是群的Id
+                        GroupMemberActivity.showAdmin(getContext(), mReceiverId );
                         return true;
                     }
                     return false;
