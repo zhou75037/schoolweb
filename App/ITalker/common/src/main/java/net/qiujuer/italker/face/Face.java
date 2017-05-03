@@ -19,7 +19,7 @@ public class Face {
 
     // 获取所有的表情
     public static List<FaceTab> all(@NonNull Context context) {
-        return null;
+        return new ArrayList<>();
     }
 
     // 输入表情到editable
