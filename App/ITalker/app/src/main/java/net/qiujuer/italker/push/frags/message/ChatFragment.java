@@ -9,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewStub;
@@ -17,12 +19,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import net.qiujuer.genius.ui.Ui;
 import net.qiujuer.genius.ui.compat.UiCompat;
 import net.qiujuer.genius.ui.widget.Loading;
 import net.qiujuer.italker.common.app.PresenterFragment;
 import net.qiujuer.italker.common.widget.PortraitView;
 import net.qiujuer.italker.common.widget.adapter.TextWatcherAdapter;
 import net.qiujuer.italker.common.widget.recycler.RecyclerAdapter;
+import net.qiujuer.italker.face.Face;
 import net.qiujuer.italker.factory.model.db.Message;
 import net.qiujuer.italker.factory.model.db.User;
 import net.qiujuer.italker.factory.persistence.Account;
@@ -335,9 +339,13 @@ public abstract class ChatFragment<InitModel>
         protected void onBind(Message message) {
             super.onBind(message);
 
-            // 把内容设置到布局上
-            mContent.setText(message.getContent());
+            Spannable spannable = new SpannableString(message.getContent());
 
+            // 解析表情
+            Face.decode(mContent, spannable, (int) Ui.dipToPx(getResources(), 20));
+
+            // 把内容设置到布局上
+            mContent.setText(spannable);
         }
     }
 
