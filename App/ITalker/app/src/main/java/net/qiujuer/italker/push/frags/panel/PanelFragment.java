@@ -6,20 +6,26 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import net.qiujuer.genius.ui.Ui;
 import net.qiujuer.italker.common.app.Fragment;
 import net.qiujuer.italker.common.tools.UiTool;
+import net.qiujuer.italker.common.widget.recycler.RecyclerAdapter;
 import net.qiujuer.italker.face.Face;
 import net.qiujuer.italker.push.R;
+
+import java.util.List;
 
 /**
  * 底部面板实现
  */
 public class PanelFragment extends Fragment {
+    private PanelCallback mCallback;
 
 
     public PanelFragment() {
@@ -42,6 +48,11 @@ public class PanelFragment extends Fragment {
         initGallery(root);
     }
 
+    // 开始初始化方法
+    public void setup(PanelCallback callback) {
+        mCallback = callback;
+    }
+
 
     private void initFace(View root) {
         final View facePanel = root.findViewById(R.id.lay_panel_face);
@@ -51,6 +62,15 @@ public class PanelFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // 删除逻辑
+
+                PanelCallback callback = mCallback;
+                if (callback == null)
+                    return;
+
+                // 模拟一个键盘删除点击
+                KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL,
+                        0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
+                callback.getInputEditText().dispatchKeyEvent(event);
             }
         });
 
@@ -84,7 +104,20 @@ public class PanelFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(getContext(), spanCount));
 
                 // 设置Adapter
-                
+                List<Face.Bean> faces = Face.all(getContext()).get(position).faces;
+                FaceAdapter adapter = new FaceAdapter(faces, new RecyclerAdapter.AdapterListenerImpl<Face.Bean>() {
+                    @Override
+                    public void onItemClick(RecyclerAdapter.ViewHolder holder, Face.Bean bean) {
+                        if (mCallback == null)
+                            return;
+                        // 表情添加到输入框
+                        EditText editText = mCallback.getInputEditText();
+                        Face.inputFace(getContext(), editText.getText(), bean, (int)
+                                (editText.getTextSize() + Ui.dipToPx(getResources(), 2)));
+
+                    }
+                });
+                recyclerView.setAdapter(adapter);
 
                 // 添加
                 container.addView(recyclerView);
@@ -127,5 +160,10 @@ public class PanelFragment extends Fragment {
 
     public void showGallery() {
 
+    }
+
+    // 回调聊天界面的Callback
+    public interface PanelCallback {
+        EditText getInputEditText();
     }
 }
