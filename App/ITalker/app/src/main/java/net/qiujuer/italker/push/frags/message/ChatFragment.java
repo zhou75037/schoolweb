@@ -222,7 +222,8 @@ public abstract class ChatFragment<InitModel>
 
     @Override
     public void onRecordDone(File file, long time) {
-        // TODO 语音回调回来
+        // 语音回调回来
+        mPresenter.pushAudio(file.getAbsolutePath());
     }
 
     // 内容的适配器
