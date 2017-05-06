@@ -40,6 +40,8 @@ dependencies {
 
     // 空气面板
     compile "net.qiujuer.widget:airpanel:$rootProject.ext.airpanelVersion"
+    // Lame 录音 MP3 转码器
+    compile "net.qiujuer.lame:lame:$rootProject.ext.lameVersion"
 
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterknifeVersion"
     testCompile 'junit:junit:4.12'
