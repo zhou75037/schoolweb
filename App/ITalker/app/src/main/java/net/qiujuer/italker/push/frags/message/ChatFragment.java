@@ -20,10 +20,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import net.qiujuer.genius.kit.handler.Run;
+import net.qiujuer.genius.kit.handler.runable.Action;
 import net.qiujuer.genius.ui.Ui;
 import net.qiujuer.genius.ui.compat.UiCompat;
 import net.qiujuer.genius.ui.widget.Loading;
+import net.qiujuer.italker.common.app.Application;
 import net.qiujuer.italker.common.app.PresenterFragment;
+import net.qiujuer.italker.common.tools.AudioPlayHelper;
 import net.qiujuer.italker.common.widget.PortraitView;
 import net.qiujuer.italker.common.widget.adapter.TextWatcherAdapter;
 import net.qiujuer.italker.common.widget.recycler.RecyclerAdapter;
@@ -32,6 +36,7 @@ import net.qiujuer.italker.factory.model.db.Message;
 import net.qiujuer.italker.factory.model.db.User;
 import net.qiujuer.italker.factory.persistence.Account;
 import net.qiujuer.italker.factory.presenter.message.ChatContract;
+import net.qiujuer.italker.factory.utils.FileCache;
 import net.qiujuer.italker.push.R;
 import net.qiujuer.italker.push.activities.MessageActivity;
 import net.qiujuer.italker.push.frags.panel.PanelFragment;
@@ -77,6 +82,10 @@ public abstract class ChatFragment<InitModel>
     // 控制顶部面板与软键盘过度的Boss控件
     private AirPanel.Boss mPanelBoss;
     private PanelFragment mPanelFragment;
+
+    // 语音的基础
+    private FileCache<AudioHolder> mAudioFileCache;
+    private AudioPlayHelper<AudioHolder> mAudioPlayer;
 
     @Override
     protected void initArgs(Bundle bundle) {
@@ -125,6 +134,68 @@ public abstract class ChatFragment<InitModel>
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new Adapter();
         mRecyclerView.setAdapter(mAdapter);
+        // 添加适配器监听器，进行点击的实现
+        mAdapter.setListener(new RecyclerAdapter.AdapterListenerImpl<Message>() {
+            @Override
+            public void onItemClick(RecyclerAdapter.ViewHolder holder, Message message) {
+                if (message.getType() == Message.TYPE_AUDIO && holder instanceof ChatFragment.AudioHolder) {
+                    // 权限的判断，当然权限已经全局申请了
+                    mAudioFileCache.download((ChatFragment.AudioHolder) holder, message.getContent());
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // 进入界面的时候就进行初始化
+        mAudioPlayer = new AudioPlayHelper<>(new AudioPlayHelper.RecordPlayListener<AudioHolder>() {
+            @Override
+            public void onPlayStart(AudioHolder audioHolder) {
+                // 范型作用就在于此
+                audioHolder.onPlayStart();
+            }
+
+            @Override
+            public void onPlayStop(AudioHolder audioHolder) {
+                // 直接停止
+                audioHolder.onPlayStop();
+            }
+
+            @Override
+            public void onPlayError(AudioHolder audioHolder) {
+                // 提示失败
+                Application.showToast(R.string.toast_audio_play_error);
+            }
+        });
+
+        // 下载工具类
+        mAudioFileCache = new FileCache<>("audio/cache", "mp3", new FileCache.CacheListener<AudioHolder>() {
+            @Override
+            public void onDownloadSucceed(final AudioHolder holder, final File file) {
+                Run.onUiAsync(new Action() {
+                    @Override
+                    public void call() {
+                        // 主线程播放
+                        mAudioPlayer.trigger(holder, file.getAbsolutePath());
+                    }
+                });
+            }
+
+            @Override
+            public void onDownloadFailed(AudioHolder holder) {
+                Application.showToast(R.string.toast_download_error);
+            }
+        });
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAudioPlayer.destroy();
     }
 
     @Override
