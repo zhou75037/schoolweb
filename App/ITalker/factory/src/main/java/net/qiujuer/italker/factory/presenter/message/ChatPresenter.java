@@ -1,6 +1,7 @@
 package net.qiujuer.italker.factory.presenter.message;
 
 import android.support.v7.util.DiffUtil;
+import android.text.TextUtils;
 
 import net.qiujuer.italker.factory.data.helper.MessageHelper;
 import net.qiujuer.italker.factory.data.message.MessageDataSource;
@@ -49,8 +50,20 @@ public class ChatPresenter<View extends ChatContract.View>
     }
 
     @Override
-    public void pushAudio(String path) {
-        // TODO 发送语音
+    public void pushAudio(String path, long time) {
+        if(TextUtils.isEmpty(path)){
+            return;
+        }
+
+        // 构建一个新的消息
+        MsgCreateModel model = new MsgCreateModel.Builder()
+                .receiver(mReceiverId, mReceiverType)
+                .content(path, Message.TYPE_AUDIO)
+                .attach(String.valueOf(time))
+                .build();
+
+        // 进行网络发送
+        MessageHelper.push(model);
     }
 
     @Override

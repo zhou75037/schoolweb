@@ -223,7 +223,7 @@ public abstract class ChatFragment<InitModel>
     @Override
     public void onRecordDone(File file, long time) {
         // 语音回调回来
-        mPresenter.pushAudio(file.getAbsolutePath());
+        mPresenter.pushAudio(file.getAbsolutePath(), time);
     }
 
     // 内容的适配器
@@ -365,6 +365,10 @@ public abstract class ChatFragment<InitModel>
 
     // 语音的Holder
     class AudioHolder extends BaseHolder {
+        @BindView(R.id.txt_content)
+        TextView mContent;
+        @BindView(R.id.im_audio_track)
+        ImageView mAudioTrack;
 
         public AudioHolder(View itemView) {
             super(itemView);
@@ -373,7 +377,38 @@ public abstract class ChatFragment<InitModel>
         @Override
         protected void onBind(Message message) {
             super.onBind(message);
-            // TODO
+            // long 30000
+            String attach = TextUtils.isEmpty(message.getAttach()) ? "0" :
+                    message.getAttach();
+            mContent.setText(formatTime(attach));
+        }
+
+        // 当播放开始
+        void onPlayStart() {
+            // 显示
+            mAudioTrack.setVisibility(View.VISIBLE);
+        }
+
+        // 当播放停止
+        void onPlayStop() {
+            // 占位并隐藏
+            mAudioTrack.setVisibility(View.INVISIBLE);
+        }
+
+        private String formatTime(String attach) {
+            float time;
+            try {
+                // 毫秒转换为秒
+                time = Float.parseFloat(attach) / 1000f;
+            } catch (Exception e) {
+                time = 0;
+            }
+            // 12000/1000f = 12.0000000
+            // 取整一位小数点 1.234 -> 1.2 1.02 -> 1.0
+            String shortTime = String.valueOf(Math.round(time * 10f) / 10f);
+            // 1.0 -> 1     1.2000 -> 1.2
+            shortTime = shortTime.replaceAll("[.]0+?$|0+?$", "");
+            return String.format("%s″", shortTime);
         }
     }
 
