@@ -56,23 +56,46 @@
         -->
 
 
-        <mapping package="net.qiujuer.web.italker.push.bean.db"
-                 class="net.qiujuer.web.italker.push.bean.db.User"/>
-        <mapping package="net.qiujuer.web.italker.push.bean.db"
-                 class="net.qiujuer.web.italker.push.bean.db.UserFollow"/>
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.User"/>
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.UserFollow"/>
 
-        <mapping package="net.qiujuer.web.italker.push.bean.db"
-                 class="net.qiujuer.web.italker.push.bean.db.Group"/>
-        <mapping package="net.qiujuer.web.italker.push.bean.db"
-                 class="net.qiujuer.web.italker.push.bean.db.GroupMember"/>
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.Group"/>
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.GroupMember"/>
 
-        <mapping package="net.qiujuer.web.italker.push.bean.db"
-                 class="net.qiujuer.web.italker.push.bean.db.Message"/>
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.Message"/>
 
-        <mapping package="net.qiujuer.web.italker.push.bean.db"
-                 class="net.qiujuer.web.italker.push.bean.db.PushHistory"/>
-        <mapping package="net.qiujuer.web.italker.push.bean.db"
-                 class="net.qiujuer.web.italker.push.bean.db.Apply"/>
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.PushHistory"/>
+
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.Apply"/>
+
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.StudentFollow"/>
+
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.Student"/>
+
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.Grade"/>
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.Family"/>
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.Classes"/>
+
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.Teacher"/>
+
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.TeacherFollow"/>
+
+        <mapping package="net.school.web.italker.push.bean.db"
+                 class="net.school.web.italker.push.bean.db.Task"/>
 
     </session-factory>
 </hibernate-configuration>

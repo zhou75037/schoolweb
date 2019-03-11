@@ -14,8 +14,7 @@
     <facet type="hibernate" name="Hibernate">
       <configuration>
         <datasource-map>
-          <unit-entry name="hibernate.cfg.xml" />
-          <unit-entry name="resources:hibernate.cfg.xml" value="1e99ea65-394f-4728-8924-bf4f0584fbe8" />
+          <unit-entry name="resources:hibernate.cfg.xml" value="cc65d924-499d-4b7f-9b60-d668a56f95dc" />
         </datasource-map>
         <naming-strategy-map />
         <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/resources/hibernate.cfg.xml" />
@@ -30,8 +29,5 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="library" name="Gradle: com.gexin.platform:gexin-rp-sdk-http:4.0.1.7" level="project" />
-    <orderEntry type="library" name="Gradle: com.gexin.platform:gexin-rp-sdk-base:4.0.0.12" level="project" />
-    <orderEntry type="library" name="Gradle: com.gexin.platform:gexin-rp-sdk-template:4.0.0.6" level="project" />
   </component>
 </module>
